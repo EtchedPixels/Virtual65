@@ -22,24 +22,20 @@ On boot the bank registers are 0,1,2,3,4,5,6,7.
 
 I/O space is 0xFE00 plus
 
-FE00-FE07	r/w	bank number
-
-FE10		ro	timer int clear (reports number of interrupts since
-			last)
-
-FE20		r	next input byte
-FE20		w	output byte
-FE21		r	input status (bit 0 - input pending bit 1 - write ready)
-
-FE30		r/w	disk number
-FE31		r/w	block high
-FE32		r/w	block low	(512 byte blocks)
-FE33		w	trigger disk action (sets diskstat, uses disk/block)
-FE34		r/w	read or write next byte
-FE35		r/w	disk status
-
-FE40		w	Write 0xA5 to halt system
-
+| Address | R/W | Description
+| ------- | --- | -----------
+| FE00-7  | r/w	| Bank number
+| FE10    | ro	| Timer int clear (reports interrupts since last)
+| FE20    | r   | Next input byte
+| FE20    | w   | Output byte
+| FE21    | r   | Input status (bit 0 - input pending bit 1 - write ready)
+| FE30    | r/w | Disk number
+| FE31    | r/w | Block high
+| FE32    | r/w | Block low	(512 byte blocks)
+| FE33    | w   | Trigger disk action (sets diskstat, uses disk/block)
+| FE34    | r/w | Read or write next byte
+| FE35    | r/w | Disk status
+| FE40    | w   | Write 0xA5 to halt system
 
 ### Bootstrap
 
@@ -49,4 +45,3 @@ The imaginary boot ROM loads block 0 from disk to $0200 and jumps to it.
 
 Currently one large disc is implemented. It's meant to provide a simple
 API akin to that we'll have calling through the tube firmware.
-
