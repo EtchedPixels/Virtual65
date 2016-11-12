@@ -75,8 +75,11 @@ static uint8_t io_read(uint16_t addr)
 		return blk & 0xFF;
 	if (addr == 0x34)
 		return fgetc(diskfile);
-	if (addr == 0x35)
-		return diskstat;
+	if (addr == 0x35) {
+		uint8_t v = diskstat;
+		diskstat = 0;
+		return v;
+	}
 	return 0xFF;
 }
 
@@ -117,12 +120,6 @@ static void io_write(uint16_t addr, uint8_t value)
 		fputc(value, diskfile);
 		return;
 	}
-	if (addr == 0x35) {
-		fprintf(stderr, "Bad write: dskstat\n");
-		diskstat = value;
-		return;
-	}
-
 	if (addr == 0x40 && value == 0xA5)
 		exit(0);
 }

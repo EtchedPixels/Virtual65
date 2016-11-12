@@ -28,13 +28,13 @@ I/O space is 0xFE00 plus
 | FE10    | ro	| Timer int clear (reports interrupts since last)
 | FE20    | r   | Next input byte
 | FE20    | w   | Output byte
-| FE21    | r   | Input status (bit 0 - input pending bit 1 - write ready)
+| FE21    | ro  | Input status (bit 0 - input pending bit 1 - write ready)
 | FE30    | r/w | Disk number
 | FE31    | r/w | Block high
 | FE32    | r/w | Block low	(512 byte blocks)
 | FE33    | w   | Trigger disk action (sets diskstat, uses disk/block)
 | FE34    | r/w | Read or write next byte
-| FE35    | r/w | Disk status
+| FE35    | ro  | Disk status (clear on read)
 | FE40    | w   | Write 0xA5 to halt system
 
 ### Bootstrap
