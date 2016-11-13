@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <signal.h>
+#include <time.h>
+#include <sys/ioctl.h>
+#include <termios.h>
 
 #include "6502.h"
 
@@ -88,6 +92,7 @@ static void io_write(uint16_t addr, uint8_t value)
 	addr -= 0xFE00;
 	if (addr < 8) {
 		bank[addr] = value & 127;
+/*		printf("bank %d -> %d\n", addr, value); */
 		return;
 	}
 	if (addr == 0x20) {
@@ -152,26 +157,61 @@ static void system_process(void)
 		irq6502();
 }
 
+static struct termios saved_term, term;
+
+static void cleanup(int sig)
+{
+	ioctl(0, TCSETS, &saved_term);
+	exit(1);
+}
+
+static void exit_cleanup(void)
+{
+	ioctl(0, TCSETS, &saved_term);
+}
+
+static void take_a_nap(void)
+{
+	struct timespec t;
+	t.tv_sec = 0;
+	t.tv_nsec = 10000000;
+	if (nanosleep(&t, NULL))
+		perror("nanosleep");
+}
+
+
 int main(int argc, char *argv[])
 {
+	if (ioctl(0, TCGETS, &term) == 0) {
+		saved_term = term;
+		atexit(exit_cleanup);
+		signal(SIGINT, cleanup);
+		signal(SIGQUIT, cleanup);
+		term.c_iflag &= ~ICANON;
+		term.c_cc[VMIN] = 1;
+		term.c_cc[VTIME] = 0;
+		ioctl(0, TCSETS, &term);
+	}
+
 	diskfile = fopen("disk0", "r+");
 	if (diskfile == NULL) {
 		perror("disk0");
 		exit(1);
 	}
-	if (fread(ram[0] + 512, 512, 1, diskfile) != 1) {
+	if (fread(ram[7] + 0x1C00, 512, 1, diskfile) != 1) {
 		fprintf(stderr, "Unable to read boot image.\n");
 		exit(1);
 	}
 
 	write6502(0xFFFC, 0x00);
-	write6502(0xFFFD, 0x02);
+	write6502(0xFFFD, 0xFC);
 
 	reset6502();
 
 	hookexternal(system_process);
 	while (1) {
 		exec6502(41943);
+		take_a_nap();
 		timer_int++;
 	}
 }
