@@ -39,7 +39,7 @@ I/O space is 0xFE00 plus
 
 ### Bootstrap
 
-The imaginary boot ROM loads block 0 from disk to $0200 and jumps to it.
+The imaginary boot ROM loads block 0 from disk to $FC00 and jumps to it.
 
 ### Notes
 

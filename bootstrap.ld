@@ -1,6 +1,6 @@
 MEMORY {
 	RAMZ:	start = $0000, size = $0100, type = rw, define = yes;
-	RAM0:	start = $0200, size = $0100, type = rw, define = yes;
+	RAM0:	start = $FC00, size = $0200, type = rw, define = yes;
 }
 
 SEGMENTS {

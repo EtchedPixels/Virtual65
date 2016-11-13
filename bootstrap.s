@@ -5,7 +5,7 @@
 
 ptr1	=	$FE
 
-	; At 0x0200
+	; At 0xFC00
 
 	sei
 
@@ -24,9 +24,9 @@ ptr1	=	$FE
 	lda #1
 	sta $FE33
 
-	ldx #$DE	; going to load 56K - 512 bytes
-	lda #$20
-	sta ptr1+1	; at 0x2000-0xFDFF
+	ldx #$FA	; going to load 0200 to FBFF (64000 bytes)
+	lda #$02
+	sta ptr1+1	; at 0x0200-0xFBFF
 diskload_2:
 	lda $FE35
 	cmp #0
@@ -46,10 +46,10 @@ diskload_1:
 	lda #10
 	sta $FE20
 	lda $2000
-	cmp #$65
+	cmp #65
 	bne badcode
 	lda $2001
-	cmp #$02
+	cmp #02
 	bne badcode
 	lda #<booting
 	ldx #>booting
